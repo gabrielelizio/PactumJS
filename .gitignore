@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# PactumJS files
+.pactum/
+.pactum-debug/
+.pactum-log/
+
+# Environment variables
+.env
+
+# IDE configuration
+.vscode/
