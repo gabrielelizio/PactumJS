@@ -100,7 +100,11 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
-    "test": "mocha --require dotenv/config --recursive test/*.spec.js"
+    "test": "mocha --require dotenv/config --recursive test/*.spec.js",
+    "test:health": "mocha --require dotenv/config test/health-check.spec.js",
+    "test:watch": "mocha --require dotenv/config --watch test/*.spec.js",
+    "test:watch:all": "mocha --require dotenv/config --watch test/**/*.spec.js",
+    "test:watch:pet": "mocha --require dotenv/config --watch test/pet.spec.js"
   },
   "keywords": [],
   "author": "",
