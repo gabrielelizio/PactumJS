@@ -191,7 +191,7 @@ describe('Petstore API - Pet Endpoints', () => {
             console.log('Tentativa GET:', response.statusCode, response.body);
             return response;
           },
-          { retries: 15, delay: 4000, shouldRetry: (response) => response.statusCode === 404 }
+          { retries: 25, delay: 4000, shouldRetry: (response) => response.statusCode === 404 }
         );
         if (!petDetails || petDetails.statusCode !== 200) {
           console.log(`Não foi possível encontrar o pet ${petIdToUpdate} após várias tentativas.`);
@@ -239,21 +239,33 @@ describe('Petstore API - Pet Endpoints', () => {
           .put('/pet')
           .withJson(updatedPet)
           .toss(),
-      { retries: 8, delay: 3500, shouldRetry: (response) => response.statusCode === 404 }
+      { retries: 20, delay: 6500, shouldRetry: (response) => response.statusCode === 404 }
       );
 
       console.log(`Verificando se o pet ${petIdToUpdate} foi atualizado via GET...`);
-      await sleep(50000);
-      await spec()
-        .get('/pet/{petId}')
-        .withPathParams('petId', petIdToUpdate)
-        .withRequestTimeout(50000)
-        .expectStatus(200)
-        .expectJsonLike({
-          id: petIdToUpdate,
-          name: newName,
-          status: newStatus
-        });
+
+      const verifyResponse = await retryAsync(
+        async () => {
+          const res = await spec()
+            .get('/pet/{petId}')
+            .withPathParams('petId', petIdToUpdate)
+            .withRequestTimeout(50000)
+            .toss();
+          console.log(`Tentativa GET após update: ${res.statusCode} ${JSON.stringify(res.body)}`);
+          return res;
+        },
+        { retries: 10, delay: 4000, shouldRetry: (res) => res.statusCode === 404 }
+      );
+
+      if (verifyResponse.statusCode !== 200) {
+        throw new Error(`Pet não encontrado após update. Última resposta: ${verifyResponse.statusCode}`);
+      }
+
+      expect(verifyResponse.body).to.include({
+        id: petIdToUpdate,
+        name: newName,
+        status: newStatus
+      });
 
       console.log(`Pet ${petIdToUpdate} atualizado com sucesso para nome: "${newName}" e status: "${newStatus}"`);
     }).timeout(10000); 
