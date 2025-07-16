@@ -75,7 +75,7 @@ describe('Petstore API - Pet Endpoints', () => {
     });
   });
 
-  describe.only('POST /pet - Add a new pet', () => {
+  describe('POST /pet - Add a new pet', () => {
     let createdPetId;
 
     before(async () => {
