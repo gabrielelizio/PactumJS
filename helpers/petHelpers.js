@@ -1,6 +1,7 @@
 // helpers/petHelpers.js
 
 const { spec } = require('pactum');
+const { retryAsync } = require('../helpers/retryHelper');
 
 /**
  * Cria um novo pet na Petstore API.
