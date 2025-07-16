@@ -1,158 +1,129 @@
-# Projeto de Testes de API com PactumJS
+# PactumJS - Testes Automatizados de API
 
-<!-- Badges -->
-<p align="center">
-  <a href="https://www.npmjs.com/package/pactum"><img src="https://img.shields.io/npm/v/pactum.svg?style=flat-square" alt="NPM Version"></a>
-  <a href="https://github.com/actions/workflows/ci.yml/badge.svg"><img src="https://github.com/actions/workflows/ci.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://github.com/blob/main/LICENSE"><img src="https://img.shields.io/github/license/?style=flat-square" alt="License"></a>
-</p>
-
-<p align="center">
-  Projeto de exemplo para testes de API REST em Node.js utilizando <strong>Pactum</strong>, <strong>Mocha</strong> e <strong>Chai</strong>.
-</p>
+Este projeto é uma base robusta para automação de testes de APIs REST utilizando [PactumJS](https://pactumjs.github.io/), [Mocha](https://mochajs.org/) e [Chai](https://www.chaijs.com/). Ele foi pensado para ser facilmente adaptável a qualquer API privada, com foco em boas práticas, clareza e manutenção.
 
 ---
-
-## 📖 Sobre
-
-Este repositório contém uma estrutura base para a automação de testes de API. O objetivo é demonstrar uma abordagem prática e eficiente para validar endpoints, utilizando um conjunto de ferramentas populares e poderosas do ecossistema JavaScript.
-
-## ✨ Funcionalidades
-
--   **Testes de API:** Utiliza o [Pactum](https://pactumjs.github.io/) para criar requisições e asserções de forma declarativa e fluente.
--   **Test Runner:** Orquestra a execução dos testes com o [Mocha](https://mochajs.org/), um framework de testes flexível.
--   **Asserções:** Utiliza o [Chai](https://www.chaijs.com/) para asserções expressivas e legíveis.
--   **Variáveis de Ambiente:** Gerencia configurações sensíveis (como URLs de API e chaves) de forma segura com o [Dotenv](https://github.com/motdotla/dotenv).
--   **Estrutura Organizada:** Separação clara entre testes, helpers e configurações.
--   **CI/CD:** Integração com GitHub Actions para execução automática de testes.
 
 ## 📁 Estrutura do Projeto
 
 ```
 PactumJS/
-├── .github/
+├── .github/                # Workflows de CI/CD (GitHub Actions)
 │   └── workflows/
-│       └── ci.yml              # Configuração do GitHub Actions
-├── helpers/
-│   ├── dataFactories.js        # Fábricas de dados para testes
-│   └── petHelpers.js           # Helpers específicos para testes de pets
-├── setup/
-│   └── base.js                 # Configurações base para os testes
-├── test/
-│   └── pet.spec.js             # Testes de API para endpoints de pets
-├── .gitignore                  # Arquivos ignorados pelo Git
-├── package.json                # Dependências e scripts do projeto
-└── README.md                   # Este arquivo
+│       └── ci.yml          # Pipeline de testes automatizados
+├── helpers/                # Funções auxiliares reutilizáveis
+│   ├── dataFactories.js    # Fábricas de dados para os testes
+│   ├── petHelpers.js       # Helpers para operações com pets
+│   └── retryHelper.js      # Helper genérico para lógica de retry (DRY)
+├── setup/                  # Configurações globais dos testes
+│   └── base.js             # Setup de URL base, dotenv, etc.
+├── test/                   # Testes automatizados
+│   ├── health-check.spec.js# Teste de saúde da API
+│   └── pet.spec.js         # Testes dos endpoints de pets
+├── .env                    # Variáveis de ambiente (NÃO versionar)
+├── .gitignore              # Arquivos/pastas ignorados pelo git
+├── package.json            # Dependências e scripts do projeto
+├── package-lock.json       # Lockfile do npm
+├── README.md               # Documentação do projeto
 ```
 
-## 🚀 Começando
+---
 
-Para executar este projeto localmente, siga os passos abaixo.
+## 🚀 Sobre o Projeto
 
-### Pré-requisitos
+- **Automação de testes de API REST** com PactumJS, Mocha e Chai.
+- **DRY e robustez:** lógica de retry centralizada, tratamento de inconsistências eventuais, logs detalhados.
+- **Fácil manutenção:** estrutura modular, helpers reutilizáveis, exemplos claros.
+- **Pronto para CI/CD:** integração com GitHub Actions.
 
--   Node.js (versão 12 ou superior)
--   NPM ou Yarn
+---
 
-### Instalação
+## ⚙️ Configuração Inicial
 
-1.  Clone o repositório:
-    ```bash
-    git clone https://github.com/gabrielelizio/PactumJS.git
-    cd PactumJS
-    ```
+### 1. Variáveis de Ambiente
 
-2.  Instale as dependências do projeto:
-    ```bash
-    npm install
-    ```
+Crie um arquivo `.env` na raiz do projeto:
 
-## ⚙️ Configuração
+```
+BASE_URL=https://sua-api-privada.com/api/v1
+```
+- Substitua pelo endpoint da sua API privada.
+- **Nunca** faça commit do `.env`.
 
-Este projeto utiliza a biblioteca `dotenv` para carregar variáveis de ambiente a partir de um arquivo `.env`.
+### 2. Instale as dependências
 
-1.  Crie um arquivo chamado `.env` na raiz do projeto.
-2.  Adicione as variáveis necessárias para o seu ambiente de teste.
-
-```bash
-# .env
-API_BASE_URL="https://api.seu-servico.com"
-API_KEY="sua-chave-secreta-aqui"
+```sh
+npm install
 ```
 
-## 🧪 Rodando os Testes
+### 3. Como rodar os testes
 
-### Verificar saúde da API
-```bash
-npm run test:health
-```
-
-### Executar todos os testes
-```bash
+```sh
 npm test
 ```
 
-### Executar testes específicos
-```bash
-# Executar apenas testes de pets
-npx mocha --require dotenv/config test/pet.spec.js
+---
 
-# Executar apenas health check
-npm run test:health
+## 🧪 Estrutura dos Testes
+
+- **setup/base.js:** Carrega variáveis de ambiente e define a URL base para todas as requisições PactumJS.
+- **helpers/retryHelper.js:** Função `retryAsync` para DRY de tentativas (usada em GET, PUT, DELETE, etc).
+- **helpers/petHelpers.js:** Funções para criar, deletar e manipular pets.
+- **test/pet.spec.js:** Testes completos dos endpoints de pet, usando retry, validação de schema e boas práticas.
+- **test/health-check.spec.js:** Teste simples para verificar se a API está online.
+
+---
+
+## 🛡️ Segurança
+
+- O projeto **NÃO** deve ser usado com APIs públicas sem autenticação.
+- Sempre defina a variável `BASE_URL` para ambientes privados.
+- O `.gitignore` já ignora `.env` por padrão.
+- Em CI/CD, defina `BASE_URL` no workflow (exemplo para GitHub Actions):
+
+```yaml
+- name: Rodar testes
+  run: npm test
+  env:
+    BASE_URL: https://sua-api-privada.com/api/v1
 ```
 
-### Executar testes em modo watch
-```bash
-npm run test:watch
-```
+---
 
-### Executar testes específicos em modo watch
-```bash
-npm run test:watch:pet
-```
-
-## ⚠️ Solução de Problemas
-
-### API retornando erro 500
-Se a API do Petstore estiver retornando erro 500, isso pode ser um problema temporário. Os testes foram configurados para:
-
-1. **Tratar erros graciosamente** - Os testes pulam automaticamente se não conseguirem criar pets
-2. **Logs informativos** - Mensagens claras sobre o que está acontecendo
-3. **Health check** - Use `npm run test:health` para verificar se a API está funcionando
-
-### Testes falhando por dados incorretos
-Os dados esperados foram ajustados para corresponder aos dados reais da API. Se ainda houver problemas:
-
-1. Execute o health check primeiro
-2. Verifique se a API está retornando os dados esperados
-3. Ajuste os dados esperados nos testes conforme necessário
-
-## 📦 Dependências Principais
+## 📦 Principais Dependências
 
 - **pactum**: Framework para testes de API
 - **mocha**: Test runner
 - **chai**: Biblioteca de asserções
 - **dotenv**: Gerenciamento de variáveis de ambiente
 
-## 🔧 Scripts Disponíveis
+---
 
-- `npm test`: Executa todos os testes do projeto
-- O script utiliza Mocha com configuração do dotenv e recursividade para encontrar todos os arquivos `.spec.js`
+## 🏆 Boas Práticas Adotadas
 
-## 🤝 Contribuindo
+- **DRY:** Retry centralizado em helper reutilizável.
+- **Logs detalhados:** Facilita troubleshooting.
+- **Testes resilientes:** Lida com delays e inconsistências da API.
+- **Estrutura modular:** Fácil de expandir e manter.
 
-Contribuições são sempre bem-vindas! Se você deseja contribuir:
+---
+
+## 🤝 Como Contribuir
 
 1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
+2. Crie uma branch para sua feature (`git checkout -b feature/NovaFeature`)
+3. Commit suas mudanças (`git commit -m 'feat: adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/NovaFeature`)
 5. Abra um Pull Request
 
-## 📜 Licença
-
-Este projeto está licenciado sob a Licença ISC - veja o arquivo LICENSE para mais detalhes.
+---
 
 ## 🆘 Suporte
 
-Se você encontrar algum problema ou tiver dúvidas, por favor abra uma issue no repositório.
+- Abra uma issue no repositório para dúvidas, bugs ou sugestões.
+
+---
+
+## 📜 Licença
+
+Este projeto está licenciado sob a Licença ISC. Veja o arquivo LICENSE para mais detalhes.

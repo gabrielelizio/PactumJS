@@ -11,7 +11,6 @@ const { retryAsync } = require('../helpers/retryHelper');
 async function createPet(overrides = {}) {
   const defaultPetName = `AutoTestPet-${Date.now()}`;
 
-  // Define os valores padrão para um pet
   const defaultData = {
     name: defaultPetName,
     photoUrls: [`https://example.com/photos/${defaultPetName}.jpg`],
@@ -19,7 +18,6 @@ async function createPet(overrides = {}) {
     tags: [{ "id": 1, "name": "helper-tag" }],
   };
 
-  // Mescla os dados padrão com os que foram passados, dando prioridade aos overrides
   const finalPetData = { ...defaultData, ...overrides };
 
   try {
@@ -74,7 +72,6 @@ async function createPet(overrides = {}) {
       .stores('latestCreatedPetId', 'id');
 
     const createdId = response.json.id;
-    // Agora o log usa o nome final que foi enviado para a API
     console.log(`[Helper] Pet criado: ID ${createdId}, Nome: ${finalPetData.name}`);
     return createdId;
   } catch (error) {
