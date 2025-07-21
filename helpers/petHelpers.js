@@ -35,7 +35,7 @@ async function createPet(overrides = {}) {
         delay: 2500,
         shouldRetry: (res) => {
           console.log(`[Helper] Tentativa de criar pet. Status: ${res.statusCode}`);
-          return res.statusCode >= 500; // Tenta novamente em erros de servidor
+          return res.statusCode >= 500; 
         }
       }
     );
@@ -49,7 +49,7 @@ async function createPet(overrides = {}) {
     return createdId;
   } catch (error) {
     console.error(`[Helper] Erro final no processo de criação do pet: ${error.message}`);
-    throw error; // Re-lança o erro para que o 'before' hook falhe e o Mocha saiba.
+    throw error; 
   }
 }
 

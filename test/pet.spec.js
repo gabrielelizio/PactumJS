@@ -72,7 +72,7 @@ describe('Petstore API - Pet Endpoints', () => {
     });
 
     it('should return 404 for pet not found', async function() {
-      this.timeout(30000); // Aumenta o timeout para permitir retries
+      this.timeout(30000); 
       const response = await retryAsync(
         () => spec()
           .get('/pet/{petId}')
@@ -81,7 +81,7 @@ describe('Petstore API - Pet Endpoints', () => {
         {
           retries: 5,
           delay: 2000,
-          // Tenta novamente apenas se for um erro de servidor, pois o esperado é 404
+          
           shouldRetry: (res) => res.statusCode === 500
         }
       );
@@ -95,17 +95,17 @@ describe('Petstore API - Pet Endpoints', () => {
     let createdPetId;
 
     before(async function() {
-      this.timeout(20000); // Aumenta o timeout para o setup
+      this.timeout(20000); 
       try {
         createdPetId = await createPet({ status: 'pending' });
       } catch (error) {
         console.log('Erro ao criar pet no setup:', error.message);
-        createdPetId = null; // Garante que o teste será pulado se a criação falhar
+        createdPetId = null; 
       }
     });
 
     after(async function() {
-      this.timeout(15000); // Aumenta o timeout para o cleanup
+      this.timeout(15000); 
       if (createdPetId) {
         try {
           await deletePet(createdPetId);
@@ -141,17 +141,17 @@ describe('Petstore API - Pet Endpoints', () => {
     let petIdToDelete;
 
     before(async function() {
-      this.timeout(20000); // Aumenta o timeout para o setup
+      this.timeout(20000); 
       try {
         petIdToDelete = await createPet({ name: 'Pet For Deletion' });
       } catch (error) {
         console.log('Erro ao criar pet para deleção:', error.message);
-        petIdToDelete = null; // Garante que o teste será pulado se a criação falhar
+        petIdToDelete = null; 
       }
     });
 
     it('should delete an existing pet with status 200', async function() {
-      this.timeout(15000); // Aumenta o timeout para a deleção
+      this.timeout(15000); 
       if (!petIdToDelete) {
         console.log('Pulando teste - pet não foi criado no setup');
         this.skip();
@@ -181,7 +181,7 @@ describe('Petstore API - Pet Endpoints', () => {
           shouldRetry: (response) => response.statusCode !== 404
         }
       );
-    }).timeout(25000); // Aumentado para acomodar os retries
+    }).timeout(25000); 
   });
 
   describe('PUT /pet - Updates a pet', () => {
@@ -209,9 +209,8 @@ describe('Petstore API - Pet Endpoints', () => {
               .withPathParams('petId', petIdToUpdate)
               .toss();
             console.log('Tentativa GET:', response.statusCode, response.body);
-            return response; // Retorna a resposta para o retryAsync
+            return response; 
           },
-          // Tenta novamente se o pet não for encontrado (404) ou se houver erro de servidor (500)
           { retries: 25, delay: 4000, shouldRetry: (response) => [404, 500].includes(response.statusCode) }
         );
         if (!petDetails || petDetails.statusCode !== 200) {
@@ -224,7 +223,7 @@ describe('Petstore API - Pet Endpoints', () => {
     });
 
     after(async function() {
-      this.timeout(15000); // Aumenta o timeout para o cleanup
+      this.timeout(15000); 
       if (petIdToUpdate) {
         try {
           await deletePet(petIdToUpdate);
@@ -257,8 +256,8 @@ describe('Petstore API - Pet Endpoints', () => {
       console.log('Enviando para o PUT:', updatedPet);
 
       const putResponse = await retryAsync(
-        async () => { // Tornar a função assíncrona
-          const res = await spec() // Aguardar a promessa do toss()
+        async () => { 
+          const res = await spec() 
             .put('/pet')
             .withJson(updatedPet)
             .toss();
@@ -277,19 +276,18 @@ describe('Petstore API - Pet Endpoints', () => {
       console.log(`Verificando se o pet ${petIdToUpdate} foi atualizado via GET...`);
 
       const verifyResponse = await retryAsync(
-        async () => { // A função já era async, o que é bom
+        async () => { 
           const res = await spec()
             .get('/pet/{petId}')
             .withPathParams('petId', petIdToUpdate)
             .withRequestTimeout(50000)
             .toss();
           console.log(`Tentativa GET após update: ${res.statusCode} ${JSON.stringify(res.body)}`);
-          return res; // Retorna a resposta para a lógica de retry
+          return res; 
         },
         { 
           retries: 10, 
           delay: 4000, 
-          // Tenta novamente se a API falhar (500), se o pet não for encontrado (404), ou se os dados ainda não foram atualizados
           shouldRetry: (res) => res.statusCode !== 200 || res.body.name !== newName 
         }
       );
@@ -305,6 +303,6 @@ describe('Petstore API - Pet Endpoints', () => {
       });
 
       console.log(`Pet ${petIdToUpdate} atualizado com sucesso para nome: "${newName}" e status: "${newStatus}"`);
-    }); // Removido o .timeout(10000) para usar o timeout definido no início do teste
+    }); 
   });
 });
